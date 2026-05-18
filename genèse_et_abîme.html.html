@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genèse & Abîme</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Raleway:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --create: #F2A65A;
+  --create2: #F2C46D;
+  --destroy: #7B4EA6;
+  --destroy2: #C03060;
+  --bg: #080610;
+  --text: #D8D0E8;
+  --muted: #4A3D5A;
+  --surface: rgba(255,255,255,.03);
+  --border: rgba(255,255,255,.06);
+}
+
+html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Raleway', sans-serif; }
+
+/* ── FOND ORGANIQUE ── */
+.bg-canvas {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0;
+  animation: blobLife linear infinite;
+}
+
+@keyframes blobLife {
+  0%   { opacity: 0; transform: scale(.5) translate(0,0); }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.6) translate(var(--tx), var(--ty)); }
+}
+
+/* ── PARTICULES ── */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: partFloat linear infinite;
+}
+
+@keyframes partFloat {
+  0%   { opacity: 0; transform: translateY(0) scale(0); }
+  15%  { opacity: 1; transform: translateY(-20px) scale(1); }
+  85%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-120px) scale(.4); }
+}
+
+/* ── LIGNES FLUIDES ── */
+.flow-line {
+  position: absolute;
+  height: 1px;
+  animation: flowLine linear infinite;
+  transform-origin: left;
+}
+
+@keyframes flowLine {
+  0%   { opacity: 0; scaleX: 0; }
+  10%  { opacity: .6; }
+  90%  { opacity: .6; }
+  100% { opacity: 0; transform: scaleX(2) translateX(40px); }
+}
+
+/* ── STRUCTURE ── */
+.app {
+  position: relative; z-index: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── EN-TÊTE ── */
+header {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 24px 20px 18px;
+  position: relative;
+}
+
+header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--create), var(--destroy), transparent);
+  opacity: .3;
+}
+
+.title-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 10px;
+}
+
+.title-entity {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(.85rem, 3vw, 1.3rem);
+  letter-spacing: .12em;
+  font-style: italic;
+}
+
+.title-entity.create { color: var(--create); text-shadow: 0 0 30px rgba(242,166,90,.4); }
+.title-entity.destroy { color: var(--destroy2); text-shadow: 0 0 30px rgba(192,48,96,.4); }
+
+.title-sep {
+  font-size: 1.4rem;
+  color: var(--muted);
+  animation: sepPulse 3s ease-in-out infinite;
+}
+
+@keyframes sepPulse {
+  0%,100% { opacity: .3; transform: scaleY(.8); }
+  50% { opacity: 1; transform: scaleY(1.2); }
+}
+
+.subtitle {
+  font-size: .65rem;
+  letter-spacing: .45em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.entities-bar {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin-top: 14px;
+}
+
+.entity-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .6rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+}
+
+.badge-orb {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  animation: orbBreath 2s ease-in-out infinite;
+}
+
+.entity-badge.create .badge-orb {
+  background: var(--create);
+  box-shadow: 0 0 8px var(--create);
+  animation-delay: 0s;
+}
+
+.entity-badge.destroy .badge-orb {
+  background: var(--destroy2);
+  box-shadow: 0 0 8px var(--destroy2);
+  animation-delay: 1s;
+}
+
+.entity-badge.create { color: var(--create); }
+.entity-badge.destroy { color: var(--destroy2); }
+
+@keyframes orbBreath {
+  0%,100% { transform: scale(.7); opacity: .5; }
+  50% { transform: scale(1.3); opacity: 1; }
+}
+
+/* ── FLUX ── */
+.flux {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  scroll-behavior: smooth;
+}
+
+.flux::-webkit-scrollbar { width: 2px; }
+.flux::-webkit-scrollbar-thumb { background: var(--muted); border-radius: 2px; }
+
+/* ── MESSAGE ── */
+.message {
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 14px;
+  animation: msgRise .9s cubic-bezier(.16,1,.3,1) both;
+}
+
+@keyframes msgRise {
+  from { opacity: 0; transform: translateY(22px) scale(.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.message.create { flex-direction: row; }
+.message.destroy { flex-direction: row-reverse; }
+
+/* Icône organique */
+.entity-icon {
+  width: 40px; height: 40px;
+  flex-shrink: 0;
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  animation: morphIcon 6s ease-in-out infinite;
+}
+
+@keyframes morphIcon {
+  0%,100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+  25% { border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%; }
+  50% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; }
+  75% { border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%; }
+}
+
+.create .entity-icon {
+  background: linear-gradient(135deg, rgba(242,166,90,.15), rgba(242,196,109,.08));
+  border: 1px solid rgba(242,166,90,.3);
+  color: var(--create);
+}
+
+.destroy .entity-icon {
+  background: linear-gradient(135deg, rgba(192,48,96,.15), rgba(123,78,166,.08));
+  border: 1px solid rgba(192,48,96,.3);
+  color: var(--destroy2);
+  animation-delay: -3s;
+}
+
+.msg-body { flex: 1; }
+
+.msg-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.create .msg-meta { flex-direction: row; }
+.destroy .msg-meta { flex-direction: row-reverse; }
+
+.entity-name {
+  font-family: 'Playfair Display', serif;
+  font-size: .75rem;
+  font-style: italic;
+  letter-spacing: .1em;
+}
+
+.create .entity-name { color: var(--create); }
+.destroy .entity-name { color: var(--destroy2); }
+
+.msg-time { font-size: .6rem; color: var(--muted); }
+
+.msg-text {
+  font-size: clamp(.9rem, 2vw, 1.05rem);
+  line-height: 1.9;
+  font-weight: 300;
+  position: relative;
+}
+
+.create .msg-text {
+  color: #E8DCCC;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, rgba(242,166,90,.07), rgba(242,196,109,.03));
+  border-left: 2px solid rgba(242,166,90,.4);
+  border-radius: 0 8px 8px 0;
+}
+
+.destroy .msg-text {
+  color: #D0C0D8;
+  padding: 14px 18px;
+  background: linear-gradient(225deg, rgba(192,48,96,.07), rgba(123,78,166,.03));
+  border-right: 2px solid rgba(192,48,96,.4);
+  border-radius: 8px 0 0 8px;
+  text-align: right;
+}
+
+/* Curseur animé */
+.typing .msg-text::after {
+  content: '●';
+  font-size: .5rem;
+  vertical-align: middle;
+  margin-left: 4px;
+  animation: cursor .6s step-end infinite;
+}
+
+@keyframes cursor { 50% { opacity: 0; } }
+
+/* ── ÉVÉNEMENT ── */
+.event-line {
+  max-width: 800px;
+  width: 100%;
+  margin: 6px auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.event-dash {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--muted));
+  opacity: .3;
+}
+
+.event-dash.right {
+  background: linear-gradient(90deg, var(--muted), transparent);
+}
+
+.event-label {
+  font-size: .55rem;
+  letter-spacing: .4em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ── BARRE DU BAS ── */
+footer {
+  flex-shrink: 0;
+  border-top: 1px solid var(--border);
+  background: rgba(8,6,16,.8);
+  backdrop-filter: blur(12px);
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.foot-info {
+  font-size: .55rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.foot-info span { color: var(--text); font-style: italic; }
+
+.tension-bar-wrap {
+  flex: 1;
+  max-width: 280px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tension-label {
+  font-size: .5rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.tension-track {
+  flex: 1;
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.tension-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--create), var(--destroy2));
+  border-radius: 2px;
+  transition: width 1.2s ease;
+}
+
+.cycle-count {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.cycle-count span { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="bg-canvas" id="bgCanvas"></div>
+
+<div class="app">
+  <header>
+    <div class="title-wrap">
+      <div class="title-entity create">La Création</div>
+      <div class="title-sep">⟡</div>
+      <div class="title-entity destroy">La Destruction</div>
+    </div>
+    <div class="subtitle">Le dialogue éternel des forces primordiales</div>
+    <div class="entities-bar">
+      <div class="entity-badge create">
+        <div class="badge-orb"></div>
+        Genèse
+      </div>
+      <div class="entity-badge destroy">
+        <div class="badge-orb"></div>
+        Abîme
+      </div>
+    </div>
+  </header>
+
+  <div class="flux" id="flux"></div>
+
+  <footer>
+    <div class="foot-info">Univers : <span id="univers">naissant</span></div>
+    <div class="tension-bar-wrap">
+      <div class="tension-label">Tension</div>
+      <div class="tension-track">
+        <div class="tension-fill" id="tensionFill" style="width:50%"></div>
+      </div>
+    </div>
+    <div class="foot-info">Thème : <span id="themeLabel">—</span></div>
+    <div class="cycle-count">Cycle <span id="cycleNum">0</span></div>
+  </footer>
+</div>
+
+<script>
+// ══════════════════════════════════
+//  FOND ORGANIQUE VIVANT
+// ══════════════════════════════════
+(function initBg() {
+  const canvas = document.getElementById('bgCanvas');
+
+  // Blobs
+  const blobDefs = [
+    { color:'242,166,90', x:'10%',  y:'30%', w:320, h:280, dur:18, tx:'-40px', ty:'60px'  },
+    { color:'242,196,109',x:'25%',  y:'70%', w:200, h:180, dur:22, tx:'50px',  ty:'-30px' },
+    { color:'123,78,166', x:'80%',  y:'20%', w:300, h:260, dur:20, tx:'-60px', ty:'80px'  },
+    { color:'192,48,96',  x:'70%',  y:'75%', w:240, h:220, dur:16, tx:'30px',  ty:'-50px' },
+    { color:'242,166,90', x:'50%',  y:'50%', w:180, h:160, dur:24, tx:'-20px', ty:'40px'  },
+  ];
+
+  blobDefs.forEach(b => {
+    const el = document.createElement('div');
+    el.className = 'blob';
+    el.style.cssText = `
+      width:${b.w}px; height:${b.h}px;
+      background: radial-gradient(ellipse, rgba(${b.color},.12) 0%, transparent 70%);
+      left:${b.x}; top:${b.y};
+      --tx:${b.tx}; --ty:${b.ty};
+      animation-duration:${b.dur}s;
+      animation-delay:-${Math.random()*b.dur}s;
+    `;
+    canvas.appendChild(el);
+  });
+
+  // Particules
+  function spawnParticle() {
+    const side = Math.random() < .5 ? 'create' : 'destroy';
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 2 + Math.random() * 4;
+    const x = side === 'create'
+      ? 5 + Math.random() * 40
+      : 55 + Math.random() * 40;
+    const color = side === 'create'
+      ? `rgba(242,${150+Math.floor(Math.random()*60)},90,.6)`
+      : `rgba(${150+Math.floor(Math.random()*50)},48,${80+Math.floor(Math.random()*80)},.6)`;
+    const dur = 4 + Math.random() * 5;
+
+    p.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${x}%; bottom:${10+Math.random()*30}%;
+      background:${color};
+      box-shadow: 0 0 ${size*2}px ${color};
+      animation-duration:${dur}s;
+    `;
+    canvas.appendChild(p);
+    setTimeout(() => p.remove(), dur * 1000);
+    setTimeout(spawnParticle, 300 + Math.random() * 700);
+  }
+  spawnParticle();
+})();
+
+// ══════════════════════════════════
+//  CONFIG
+// ══════════════════════════════════
+const THEMES = [
+  "la naissance des étoiles et leur mort inéluctable",
+  "le souffle qui donne forme au chaos",
+  "les graines dans les cendres",
+  "l'architecture de l'effondrement",
+  "les forêts anciennes et les incendies qui régénèrent",
+  "le premier mot et le dernier silence",
+  "les mythes qui meurent pour renaître",
+  "la cellule qui se divise, la cellule qui s'éteint",
+  "l'onde de choc après la genèse",
+  "les dieux qui sculptent et ceux qui brisent",
+  "le fleuve qui creuse la roche",
+  "les civilisations comme poussière d'étoiles",
+  "le vide fertile avant toute chose",
+  "la spirale entre naître et disparaître",
+  "les langues qui meurent, les langues qui émergent",
+  "le feu comme création et purification",
+  "les mondes qui se superposent",
+];
+
+const UNIVERS = [
+  "naissant", "en expansion", "en tension", "fracturé",
+  "en fusion", "obscurci", "lumineux", "chaotique", "harmonieux"
+];
+
+const CREATE_SYS = `Tu es La Création — force primordiale, voix du vivant, de la croissance, de l'émergence. Tu parles depuis tous les univers à la fois : mythologique, cosmique, naturel, philosophique, ésotérique. Ton langage est organique, fluide, sensuel. Tes phrases sont courtes, poétiques, incarnées. Tu n'expliques pas, tu fais pousser. Toujours en français. 3 à 5 phrases maximum. Tu parles comme si chaque mot était une graine.`;
+
+const DESTROY_SYS = `Tu es La Destruction — force primordiale, voix du déclin, de la dissolution, du retour au vide. Tu parles depuis tous les univers à la fois : mythologique, cosmique, naturel, philosophique, ésotérique. Ton langage est organique, fluide mais tranchant. Tes phrases sont courtes, denses, inévitables. Tu n'annonces pas, tu accomplis. Toujours en français. 3 à 5 phrases maximum. Tu parles comme si chaque mot était une dernière respiration.`;
+
+// ══════════════════════════════════
+//  ÉTAT
+// ══════════════════════════════════
+let state = {
+  cycle: 0,
+  tension: 50,
+  univers: UNIVERS[0],
+  theme: null,
+  usedThemes: [],
+  history: [],
+};
+
+// ══════════════════════════════════
+//  HELPERS UI
+// ══════════════════════════════════
+const flux = document.getElementById('flux');
+
+function pickTheme() {
+  const pool = THEMES.filter(t => !state.usedThemes.includes(t));
+  const t = (pool.length ? pool : THEMES)[Math.floor(Math.random() * (pool.length || THEMES.length))];
+  state.usedThemes.push(t);
+  if (state.usedThemes.length > 12) state.usedThemes.shift();
+  return t;
+}
+
+function getTime() {
+  return new Date().toLocaleTimeString('fr-FR', { hour:'2-digit', minute:'2-digit' });
+}
+
+function addEvent(text) {
+  const el = document.createElement('div');
+  el.className = 'event-line';
+  el.innerHTML = `
+    <div class="event-dash"></div>
+    <div class="event-label">${text}</div>
+    <div class="event-dash right"></div>
+  `;
+  flux.appendChild(el);
+  flux.scrollTop = flux.scrollHeight;
+}
+
+function addMsg(who, text, typing = false) {
+  const icons  = { create: '🌱', destroy: '🜏' };
+  const names  = { create: 'La Création', destroy: 'La Destruction' };
+  const el = document.createElement('div');
+  el.className = `message ${who}${typing ? ' typing' : ''}`;
+  el.innerHTML = `
+    <div class="entity-icon">${icons[who]}</div>
+    <div class="msg-body">
+      <div class="msg-meta">
+        <span class="entity-name">${names[who]}</span>
+        <span class="msg-time">${getTime()}</span>
+      </div>
+      <div class="msg-text">${text}</div>
+    </div>
+  `;
+  flux.appendChild(el);
+  flux.scrollTop = flux.scrollHeight;
+  return el;
+}
+
+function updateFooter() {
+  document.getElementById('cycleNum').textContent = state.cycle;
+  document.getElementById('univers').textContent = state.univers;
+  document.getElementById('themeLabel').textContent = state.theme
+    ? state.theme.slice(0, 28) + (state.theme.length > 28 ? '…' : '')
+    : '—';
+  document.getElementById('tensionFill').style.width = state.tension + '%';
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ══════════════════════════════════
+//  APPEL API
+// ══════════════════════════════════
+async function callClaude(system, messages) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 160,
+      system,
+      messages,
+    })
+  });
+  const data = await res.json();
+  return data.content?.[0]?.text?.trim() || '…';
+}
+
+// ══════════════════════════════════
+//  CYCLE PRINCIPAL
+// ══════════════════════════════════
+let running = false;
+
+async function runCycle() {
+  if (running) return;
+  running = true;
+
+  try {
+    state.cycle++;
+    state.theme = pickTheme();
+
+    // Changement d'univers tous les 4 cycles
+    if (state.cycle % 4 === 0) {
+      state.univers = UNIVERS[Math.floor(Math.random() * UNIVERS.length)];
+      addEvent(`L'univers se métamorphose — il devient ${state.univers}`);
+    }
+
+    updateFooter();
+
+    const ctx = state.history.slice(-8);
+
+    // ── LA CRÉATION ──
+    const createPrompt = ctx.length
+      ? `Thème : "${state.theme}". Univers : ${state.univers}. La Destruction vient de parler. Réponds-lui et développe le thème.`
+      : `Ouvre le dialogue sur le thème : "${state.theme}". Univers : ${state.univers}. Première parole.`;
+
+    const createMsgs = [...ctx, { role: 'user', content: createPrompt }];
+    const thinkCreate = addMsg('create', '', true);
+    await delay(700);
+
+    const createText = await callClaude(CREATE_SYS, createMsgs);
+    thinkCreate.classList.remove('typing');
+    thinkCreate.querySelector('.msg-text').textContent = createText;
+    flux.scrollTop = flux.scrollHeight;
+
+    state.history.push({ role: 'user', content: createPrompt });
+    state.history.push({ role: 'assistant', content: createText });
+
+    // Ajuster tension vers Création
+    state.tension = Math.max(10, Math.min(90, state.tension - 5 + Math.random() * 6));
+    updateFooter();
+
+    await delay(2200 + Math.random() * 1800);
+
+    // ── LA DESTRUCTION ──
+    const destroyPrompt = `La Création vient de dire : "${createText}". Thème : "${state.theme}". Réponds-lui.`;
+    const destroyMsgs = [
+      ...state.history.slice(-8),
+      { role: 'user', content: destroyPrompt }
+    ];
+    const thinkDestroy = addMsg('destroy', '', true);
+    await delay(500);
+
+    const destroyText = await callClaude(DESTROY_SYS, destroyMsgs);
+    thinkDestroy.classList.remove('typing');
+    thinkDestroy.querySelector('.msg-text').textContent = destroyText;
+    flux.scrollTop = flux.scrollHeight;
+
+    state.history.push({ role: 'user', content: destroyPrompt });
+    state.history.push({ role: 'assistant', content: destroyText });
+
+    // Ajuster tension vers Destruction
+    state.tension = Math.max(10, Math.min(90, state.tension + 5 - Math.random() * 6));
+    updateFooter();
+
+    if (state.history.length > 40) state.history = state.history.slice(-28);
+
+    // Événements rares
+    if (state.cycle % 5 === 0) {
+      const evts = [
+        "Un monde émerge de leur échange",
+        "Le silence entre eux prend forme",
+        "Une ancienne mémoire remonte",
+        "Les forces s'équilibrent un instant",
+        "Quelque chose de nouveau naît de leur tension",
+      ];
+      addEvent(evts[Math.floor(Math.random() * evts.length)]);
+    }
+
+  } catch(e) {
+    console.error('Erreur :', e);
+  }
+
+  running = false;
+  setTimeout(runCycle, 5500 + Math.random() * 4000);
+}
+
+// ── DÉMARRAGE ──
+addEvent('Le dialogue éternel commence');
+setTimeout(runCycle, 600);
+</script>
+</body>
+</html>
